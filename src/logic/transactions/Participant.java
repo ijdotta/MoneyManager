@@ -18,5 +18,9 @@ public class Participant {
 	public String getName() {
 		return name;
 	}
+	
+	public boolean equals(Participant participant) {
+		return this.id == participant.getId();
+	}
 
 }

@@ -22,7 +22,7 @@ public class Resumen implements Exportable, TransactionModificationSensitive {
 	@Override
 	public void add(Transaction transaction) {
 		this.transactions.add(transaction);
-		this.amount += transaction.getAmount();
+		this.amount += transaction.getAmount() / transaction.getBeneficiarios().size();
 	}
 
 	@Override
@@ -31,8 +31,8 @@ public class Resumen implements Exportable, TransactionModificationSensitive {
 			throw new TransactionNotFoundException(
 					"Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " not found. ");
 		}
-		
-		this.amount -= transaction.getAmount();
+
+		this.amount -= transaction.getAmount() / transaction.getBeneficiarios().size();
 	}
 
 	@Override
@@ -46,6 +46,11 @@ public class Resumen implements Exportable, TransactionModificationSensitive {
 
 	public List<Transaction> getTransactions() {
 		return transactions;
+	}
+
+	@Override
+	public int hashCode() {
+		return this.actor.getId();
 	}
 
 }

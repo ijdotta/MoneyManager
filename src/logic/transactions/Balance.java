@@ -1,5 +1,6 @@
 package logic.transactions;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -68,6 +69,13 @@ public class Balance implements Exportable, TransactionModificationSensitive {
 	@Override
 	public void export(ExportationVisitor exportationVisitor) {
 		exportationVisitor.visit(this);
+	}
+	
+	public List<Participant> getParticipants() {
+		List<Participant> participants = new ArrayList<>(2);
+		participants.add(participant1);
+		participants.add(participant2);
+		return participants;
 	}
 	
 	/**

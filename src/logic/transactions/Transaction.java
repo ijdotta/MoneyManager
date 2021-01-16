@@ -24,6 +24,15 @@ public class Transaction {
 	protected List<Participant> beneficiarios;
 	protected List<TransactionModificationSensitive> collections;
 
+	/**
+	 * POR DEFECTO EL PAGADOR NO ES UN BENEFICIARIO. DEBE AÑADIRSE MANUALMENTE.
+	 * @param importe
+	 * @param concepto
+	 * @param fecha
+	 * @param notas
+	 * @param pagador
+	 * @param beneficiarios
+	 */
 	public Transaction(float importe, String concepto, LocalDate fecha, String notas, Participant pagador,
 			Participant... beneficiarios) {
 		setUpLogger();
@@ -34,7 +43,7 @@ public class Transaction {
 		this.fecha = fecha;
 		this.notas = notas;
 		this.pagador = pagador;
-		this.beneficiarios = new ArrayList<>(beneficiarios.length);
+		this.beneficiarios = new ArrayList<>(beneficiarios.length + 1);
 		for (Participant beneficiario : beneficiarios)
 			this.beneficiarios.add(beneficiario);
 		this.collections = new ArrayList<>(3);
@@ -142,6 +151,11 @@ public class Transaction {
 			for (Handler h : rootLoger.getHandlers())
 				h.setLevel(Level.OFF);
 		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return id;
 	}
 
 }
