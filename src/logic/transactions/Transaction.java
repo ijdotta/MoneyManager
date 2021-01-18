@@ -1,5 +1,6 @@
 package logic.transactions;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +9,14 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import logic.data_exportation.Exportable;
+import logic.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
-public class Transaction {
+public class Transaction implements Exportable, Serializable{
 
+	private static final long serialVersionUID = 5014325065326730089L;
+	
 	private static Logger logger;
 	private static int GLOBAL_ID = 0;
 
@@ -156,6 +161,11 @@ public class Transaction {
 	@Override
 	public int hashCode() {
 		return id;
+	}
+
+	@Override
+	public void export(ExportationVisitor exportationVisitor) {
+		exportationVisitor.visit(this);
 	}
 
 }

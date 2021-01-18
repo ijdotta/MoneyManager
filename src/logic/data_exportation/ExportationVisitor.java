@@ -1,12 +1,12 @@
 package logic.data_exportation;
 
-import logic.transactions.Balance;
-import logic.transactions.Resumen;
+import logic.transactions.Participant;
+import logic.transactions.Transaction;
 
 public interface ExportationVisitor {
 
-	public void visit(Balance balance);
+	public void visit(Transaction transaction);
 
-	public void visit(Resumen resumen);
+	public void visit(Participant participant);
 
 }

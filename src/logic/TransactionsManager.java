@@ -10,13 +10,16 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import logic.data_exportation.ExportationVisitor;
 import logic.transactions.Balance;
 import logic.transactions.Participant;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
+import logic.transactions.TransactionModificationSensitive;
 import logic.transactions.exceptions.InvalidParticipantException;
 import logic.transactions.exceptions.InvalidTransactionException;
-import logic.transactions.exceptions.ParticipantNotFoundException;
+import logic.transactions.exceptions.ResumenNotFoundException;
+import logic.transactions.exceptions.TransactionNotFoundException;
 
 public class TransactionsManager {
 
@@ -40,25 +43,25 @@ public class TransactionsManager {
 		return instance == null ? new TransactionsManager() : instance;
 	}
 
-	public void addTransaction(Transaction transaction) throws InvalidTransactionException, ParticipantNotFoundException {
+	public void addTransaction(Transaction transaction) throws InvalidTransactionException, ResumenNotFoundException {
 		checkTransaction(transaction);
-		updateResumenes(transaction);
-		updateBalances(transaction);
+		addTransactionToResumenes(transaction);
+		addTransactionToBalances(transaction);
 	}
 
-	private void updateResumenes(Transaction transaction) throws ParticipantNotFoundException {
+	private void addTransactionToResumenes(Transaction transaction) throws ResumenNotFoundException {
 		for (Participant beneficiario : transaction.getBeneficiarios()) {
 			Resumen resumen = resumenes.get(beneficiario);
 
 			//if resumen==null throw ParticipantNotFoundException
-			if (resumen == null) throw new ParticipantNotFoundException("Participant #" + beneficiario.getId() + " not found. ");
+			if (resumen == null) throw new ResumenNotFoundException("Resumen of participant #" + beneficiario.getId() + " not found. ");
 
 			resumen.add(transaction);
 			transaction.addCollections(resumen);
 		}
 	}
 
-	private void updateBalances(Transaction transaction) {
+	private void addTransactionToBalances(Transaction transaction) {
 		Set<Balance> balances_to_update = new HashSet<>();
 		Participant pagador = transaction.getPagador();
 		
@@ -97,6 +100,28 @@ public class TransactionsManager {
 
 	}
 
+	public void removeTransaction(Transaction transaction) {
+		
+		for (TransactionModificationSensitive collection : transaction.getCollections()) {
+			
+			try {
+				collection.remove(transaction);
+			} catch (TransactionNotFoundException e) {
+				e.printStackTrace();
+				logger.warning(e.getMessage());
+			}
+			
+		}
+		
+		if (this.transactions.remove(transaction)) {
+			logger.fine("Transaction " + transaction.toString() + " succesfully removed. ");
+		}
+		else {
+			logger.warning("Transaction " + transaction.toString() + " was not found in manager's transaction set. ");
+		}
+		
+	}
+
 	public void addParticipant(Participant participant) throws InvalidParticipantException {
 		checkParticipant(participant);
 		
@@ -105,10 +130,29 @@ public class TransactionsManager {
 		resumenes.put(participant, resumen);
 		logger.info("Created resumen for " + participant.toString());
 
-		// TODO
+		this.participants.add(participant);
+	}
+
+	public List<Balance> getBalances() {
+		return balances;
+	}
+
+	public HashMap<Participant, Resumen> getResumenes() {
+		return resumenes;
+	}
+
+	public List<Participant> getParticipants() {
+		return participants;
+	}
+
+	public HashSet<Transaction> getTransactions() {
+		return transactions;
 	}
 
 	private void checkParticipant(Participant participant) throws InvalidParticipantException {
+		if (participant == null) {
+			throw new InvalidParticipantException("Null reference");
+		}
 		if (participant.getId() == 0) {
 			throw new InvalidParticipantException("Participat id == 0. ");
 		}
@@ -117,11 +161,10 @@ public class TransactionsManager {
 		}		
 	}
 
-	public void removeTransaction(Transaction transaction) {
-		// TODO
-	}
-
 	private void checkTransaction(Transaction transaction) throws InvalidTransactionException {
+		if (transaction == null) {
+			throw new InvalidTransactionException("Null reference");
+		}
 		if (transaction.getAmount() == 0) {
 			logger.warning("Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " costs $0. ");
 		}
@@ -129,6 +172,19 @@ public class TransactionsManager {
 			throw new InvalidTransactionException("Transaction #" + transaction.getId() + ": "
 					+ transaction.getConcepto() + " does not have an expender. ");
 		}
+	}
+	
+	public void export(ExportationVisitor exportationVisitor) {
+		for (Participant p : this.participants) {
+			p.export(exportationVisitor);
+		}
+		for (Transaction t : this.transactions) {
+			t.export(exportationVisitor);
+		}
+	}
+	
+	public void load() {
+		//TODO
 	}
 
 	/**

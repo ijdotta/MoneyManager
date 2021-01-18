@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 import logic.TransactionsManager;
 import logic.transactions.exceptions.InvalidTransactionException;
-import logic.transactions.exceptions.ParticipantNotFoundException;
+import logic.transactions.exceptions.ResumenNotFoundException;
 
 public class Debt {
 
@@ -47,7 +47,7 @@ public class Debt {
 			e.printStackTrace();
 			logger.info(
 					"No se realizó el pago de la deuda \"" + concept + "\". Transacción con información incompleta. ");
-		} catch (ParticipantNotFoundException e) {
+		} catch (ResumenNotFoundException e) {
 			e.printStackTrace();
 			logger.warning(e.getMessage());
 		}

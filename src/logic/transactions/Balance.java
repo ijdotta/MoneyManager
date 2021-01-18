@@ -12,7 +12,7 @@ import logic.data_exportation.Exportable;
 import logic.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
-public class Balance implements Exportable, TransactionModificationSensitive {
+public class Balance implements TransactionModificationSensitive {
 	
 	protected static Logger logger;
 
@@ -52,7 +52,7 @@ public class Balance implements Exportable, TransactionModificationSensitive {
 		
 		if (! this.transactions.remove(transaction) ) {
 			logger.warning("Transaction not found");
-			throw new TransactionNotFoundException("Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " not found. ");
+			throw new TransactionNotFoundException("Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " was not found in " + this.toString() + ". ");
 		}
 		
 		Participant pagador = transaction.getPagador();
@@ -66,16 +66,16 @@ public class Balance implements Exportable, TransactionModificationSensitive {
 
 	}
 
-	@Override
-	public void export(ExportationVisitor exportationVisitor) {
-		exportationVisitor.visit(this);
-	}
-	
 	public List<Participant> getParticipants() {
 		List<Participant> participants = new ArrayList<>(2);
 		participants.add(participant1);
 		participants.add(participant2);
 		return participants;
+	}
+	
+	@Override
+	public String toString() {
+		return "Balance: " + participant1.toString() + " - " + participant2.toString();
 	}
 	
 	/**

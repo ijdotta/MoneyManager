@@ -7,7 +7,7 @@ import logic.data_exportation.Exportable;
 import logic.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
-public class Resumen implements Exportable, TransactionModificationSensitive {
+public class Resumen implements TransactionModificationSensitive {
 
 	protected float amount;
 	protected List<Transaction> transactions;
@@ -29,15 +29,10 @@ public class Resumen implements Exportable, TransactionModificationSensitive {
 	public void remove(Transaction transaction) throws TransactionNotFoundException {
 		if (!this.transactions.remove(transaction)) {
 			throw new TransactionNotFoundException(
-					"Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " not found. ");
+					"Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " was not found in " + this.toString() + ". ");
 		}
 
 		this.amount -= transaction.getAmount() / transaction.getBeneficiarios().size();
-	}
-
-	@Override
-	public void export(ExportationVisitor exportationVisitor) {
-		exportationVisitor.visit(this);
 	}
 
 	public float getImporte() {
@@ -51,6 +46,11 @@ public class Resumen implements Exportable, TransactionModificationSensitive {
 	@Override
 	public int hashCode() {
 		return this.actor.getId();
+	}
+	
+	@Override
+	public String toString() {
+		return "Resumen: " + this.actor.toString();
 	}
 
 }
