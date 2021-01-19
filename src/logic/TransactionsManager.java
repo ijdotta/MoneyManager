@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -21,6 +22,7 @@ import logic.transactions.Transaction;
 import logic.transactions.TransactionModificationSensitive;
 import logic.transactions.exceptions.InvalidParticipantException;
 import logic.transactions.exceptions.InvalidTransactionException;
+import logic.transactions.exceptions.ParticipantNotFoundException;
 import logic.transactions.exceptions.ResumenNotFoundException;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
@@ -62,6 +64,8 @@ public class TransactionsManager {
 	private void addTransactionToResumenes(Transaction transaction) throws ResumenNotFoundException {
 		for (Participant beneficiario : transaction.getBeneficiarios()) {
 			Resumen resumen = resumenes.get(beneficiario);
+			
+			logger.warning("Beneficiario hashcode " + beneficiario.hashCode());
 
 			//if resumen==null throw ParticipantNotFoundException
 			if (resumen == null) throw new ResumenNotFoundException("Resumen of participant #" + beneficiario.getId() + " not found. ");
@@ -186,12 +190,13 @@ public class TransactionsManager {
 	}
 	
 	public void export(ExportationVisitor exportationVisitor) {
-		for (Participant p : this.participants) {
-			p.export(exportationVisitor);
-		}
 		for (Transaction t : this.transactions) {
 			t.export(exportationVisitor);
 		}
+		for (Participant p : this.participants) {
+			p.export(exportationVisitor);
+		}
+		
 	}
 	
 	public void load() {
@@ -201,8 +206,18 @@ public class TransactionsManager {
 		participant_loader = new ParticipantDeserializationLoader();
 		transaction_loader = new TransactionDeserializationLoader();
 		
-		participant_loader.load(path);
-		transaction_loader.load(path);
+		try {
+			participant_loader.load(path);
+/*		
+			// DEBUGGING
+			logger.info("RESUMENES after adding participants: ");
+			for (Entry<Participant, Resumen> e : resumenes.entrySet())
+				logger.info("P = " + e.getKey().toString() + " - " + e.getValue().toString());
+*/		
+			transaction_loader.load(path);
+		} catch (ParticipantNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

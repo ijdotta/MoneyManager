@@ -5,9 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import logic.transactions.exceptions.ParticipantNotFoundException;
+
 public abstract class DataDeserialization {
 
-	protected void load(String path_to_dir, String prefix) {
+	protected void load(String path_to_dir, String prefix) throws ParticipantNotFoundException {
 		File dir = new File(path_to_dir);
 		String[] files;
 		Object deserialized;
@@ -26,9 +28,9 @@ public abstract class DataDeserialization {
 		}
 	}
 	
-	public abstract void load(String path_to_dir);
+	public abstract void load(String path_to_dir) throws ParticipantNotFoundException;
 
-	protected abstract void loadItem(Object item);
+	protected abstract void loadItem(Object item) throws ParticipantNotFoundException;
 
 	public Object deserialize(String filename) {
 

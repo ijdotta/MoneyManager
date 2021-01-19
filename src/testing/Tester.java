@@ -1,10 +1,10 @@
 package testing;
 
 import java.util.Collection;
-import java.util.Random;
-
 import logic.TransactionsManager;
 import logic.data_io.data_exportation.ConsoleExportationVisitor;
+import logic.data_io.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.SerializationDataExportationVisitor;
 import logic.transactions.Balance;
 import logic.transactions.Debt;
 import logic.transactions.Participant;
@@ -19,7 +19,10 @@ public class Tester {
 
 	public static void main(String[] args) {
 		TransactionsManager manager = TransactionsManager.getInstance();
-		ConsoleExportationVisitor exportationVisitor = new ConsoleExportationVisitor();
+		ExportationVisitor serialExport, consoleExport;
+		
+		serialExport = new SerializationDataExportationVisitor();
+		consoleExport = new ConsoleExportationVisitor();
 
 		// Definir participantes
 
@@ -36,7 +39,7 @@ public class Tester {
 			e.printStackTrace();
 		}
 
-		manager.export(exportationVisitor);
+		manager.export(consoleExport);
 
 		// Definir transacciones
 
@@ -62,7 +65,7 @@ public class Tester {
 			e.printStackTrace();
 		}
 
-		manager.export(exportationVisitor);
+		manager.export(consoleExport);
 
 		// Obtener resumenes
 		printResumen(p1);
@@ -84,15 +87,18 @@ public class Tester {
 		System.out.println("Pagando deuda... ");
 		deuda.pay();
 		
-		manager.export(exportationVisitor);
+		manager.export(consoleExport);
 
 		// Obtener deuda
 		deuda = debt(p1, p2);
 		System.out.println(deuda.toString());
 		deuda.pay();
 		
-		manager.export(exportationVisitor);
-
+		manager.export(consoleExport);
+		
+		// Serialize
+		manager.export(serialExport);
+		
 	}
 
 	private static Debt debt(Participant p1, Participant p2) {

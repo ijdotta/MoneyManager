@@ -29,7 +29,7 @@ public class Transaction implements Exportable, Serializable{
 	protected String notas;
 	protected Participant pagador;
 	protected Set<Participant> beneficiarios;
-	protected List<TransactionModificationSensitive> collections;
+	protected transient List<TransactionModificationSensitive> collections;
 
 	/**
 	 * POR DEFECTO EL PAGADOR NO ES UN BENEFICIARIO. DEBE AÑADIRSE MANUALMENTE.
@@ -50,9 +50,13 @@ public class Transaction implements Exportable, Serializable{
 		this.fecha = fecha;
 		this.notas = notas;
 		this.pagador = pagador;
-		this.beneficiarios = new HashSet<>(beneficiarios.length + 1);
-		for (Participant beneficiario : beneficiarios)
-			this.beneficiarios.add(beneficiario);
+		this.beneficiarios = new HashSet<>(3);
+		
+		if (beneficiarios != null) {
+			for (Participant beneficiario : beneficiarios)
+				this.beneficiarios.add(beneficiario);
+		}
+		
 		this.collections = new ArrayList<>(3);
 	}
 
@@ -173,6 +177,20 @@ public class Transaction implements Exportable, Serializable{
 	@Override
 	public String toString() {
 		return "T" + this.id + "  :  $" + this.importe + "  :  " + this.concepto;
+	}
+	
+	public TransactionSnapshot makeSnapshot() {
+		TransactionSnapshot snap = new TransactionSnapshot();
+		snap.setId(id);
+		snap.setImporte(importe);
+		snap.setConcepto(concepto);
+		snap.setFecha(fecha);
+		snap.setNotas(notas);
+		snap.setPagador_id(pagador.getId());
+		for (Participant beneficiario : beneficiarios) {
+			snap.addBeneficiarioId(beneficiario.getId());
+		}
+		return snap;
 	}
 
 }

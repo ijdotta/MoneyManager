@@ -39,5 +39,10 @@ public class Participant implements Exportable, Serializable{
 	public String toString() {
 		return "P" + this.id + " : " + this.name;
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.id;
+	}
 
 }

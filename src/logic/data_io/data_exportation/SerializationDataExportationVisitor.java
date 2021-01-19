@@ -12,7 +12,7 @@ public class SerializationDataExportationVisitor implements ExportationVisitor {
 	@Override
 	public void visit(Transaction transaction) {
 		String filename = "t" + transaction.getId() + ".ser";
-		serialize(transaction, filename);
+		serialize(transaction.makeSnapshot(), filename);
 	}
 
 	@Override
@@ -40,7 +40,8 @@ public class SerializationDataExportationVisitor implements ExportationVisitor {
           
         catch(IOException ex) 
         { 
-            System.out.println("IOException is caught"); 
+        	ex.printStackTrace();
+            System.out.println("IOException is caught " + o.toString()); 
         } 
 	}
 	
