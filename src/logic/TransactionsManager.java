@@ -10,7 +10,10 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import logic.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.ExportationVisitor;
+import logic.data_io.data_load.DataDeserialization;
+import logic.data_io.data_load.ParticipantDeserializationLoader;
+import logic.data_io.data_load.TransactionDeserializationLoader;
 import logic.transactions.Balance;
 import logic.transactions.Participant;
 import logic.transactions.Resumen;
@@ -40,13 +43,20 @@ public class TransactionsManager {
 	}
 
 	public static TransactionsManager getInstance() {
-		return instance == null ? new TransactionsManager() : instance;
+		
+		if (instance == null) {
+			instance = new TransactionsManager();
+		}
+		
+		return instance;
 	}
 
 	public void addTransaction(Transaction transaction) throws InvalidTransactionException, ResumenNotFoundException {
-		checkTransaction(transaction);
-		addTransactionToResumenes(transaction);
-		addTransactionToBalances(transaction);
+		checkTransaction(transaction);	logger.fine("Passed checkTransaction");
+		addTransactionToResumenes(transaction); logger.fine("Passed addToResumen");
+		addTransactionToBalances(transaction);	logger.fine("Passed addToBalances");
+		
+		this.transactions.add(transaction);
 	}
 
 	private void addTransactionToResumenes(Transaction transaction) throws ResumenNotFoundException {
@@ -90,9 +100,10 @@ public class TransactionsManager {
 			}
 
 			balances_to_update.add(target_balance);
+			transaction.addCollections(target_balance);
 		}
 
-		transaction.addCollections((Balance[]) balances_to_update.toArray());
+//		transaction.addCollections((Balance[]) balances_to_update.toArray());
 		
 		for (Balance balance : balances_to_update) {
 			balance.add(transaction);
@@ -184,7 +195,14 @@ public class TransactionsManager {
 	}
 	
 	public void load() {
-		//TODO
+		String path = "./";
+		DataDeserialization participant_loader, transaction_loader;
+		
+		participant_loader = new ParticipantDeserializationLoader();
+		transaction_loader = new TransactionDeserializationLoader();
+		
+		participant_loader.load(path);
+		transaction_loader.load(path);
 	}
 
 	/**

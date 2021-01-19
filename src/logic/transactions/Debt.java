@@ -17,11 +17,12 @@ public class Debt {
 	protected Participant deudor, beneficiario;
 	protected Balance balance;
 
-	public Debt(float amount, Participant deudor, Balance balance) {
+	public Debt(float amount, Participant deudor, Participant beneficiario, Balance balance) {
 		super();
 		setUpLogger();
 		this.amount = amount;
 		this.deudor = deudor;
+		this.beneficiario = beneficiario;
 		this.balance = balance;
 	}
 
@@ -55,6 +56,11 @@ public class Debt {
 	
 	public void pay() {
 		pay(this.amount);
+	}
+	
+	@Override
+	public String toString() {
+		return "$" + this.amount + " : " + deudor.toString() + " -> " + beneficiario.toString();
 	}
 
 	/**

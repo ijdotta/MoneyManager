@@ -1,4 +1,4 @@
-package logic.data_exportation;
+package logic.data_io.data_exportation;
 
 import logic.transactions.Participant;
 import logic.transactions.Transaction;

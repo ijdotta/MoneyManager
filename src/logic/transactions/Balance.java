@@ -8,8 +8,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import logic.data_exportation.Exportable;
-import logic.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.Exportable;
+import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
 public class Balance implements TransactionModificationSensitive {
@@ -29,14 +29,24 @@ public class Balance implements TransactionModificationSensitive {
 	}
 
 	public Debt getDebt() {
-		Participant deudor = saldo < 0 ? participant2 : participant1;
-		return new Debt(saldo, deudor, this);
+		Participant deudor, beneficiario;
+		
+		if (saldo < 0) {
+			deudor = participant1;
+			beneficiario = participant2;
+		}
+		else {
+			deudor = participant2;
+			beneficiario = participant1;
+		}
+		
+		return new Debt(Math.abs(saldo) /*TODO/ 2*/, deudor, beneficiario, this);
 	}
 
 	@Override
 	public void add(Transaction transaction) {
 		Participant pagador = transaction.getPagador();
-		float amount = transaction.getAmount();
+		float amount = transaction.getAmount() / transaction.getBeneficiarios().size();
 		
 		transactions.add(transaction);
 		

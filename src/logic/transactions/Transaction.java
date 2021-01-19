@@ -3,14 +3,16 @@ package logic.transactions;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import logic.data_exportation.Exportable;
-import logic.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.Exportable;
+import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
 public class Transaction implements Exportable, Serializable{
@@ -26,7 +28,7 @@ public class Transaction implements Exportable, Serializable{
 	protected LocalDate fecha;
 	protected String notas;
 	protected Participant pagador;
-	protected List<Participant> beneficiarios;
+	protected Set<Participant> beneficiarios;
 	protected List<TransactionModificationSensitive> collections;
 
 	/**
@@ -48,18 +50,18 @@ public class Transaction implements Exportable, Serializable{
 		this.fecha = fecha;
 		this.notas = notas;
 		this.pagador = pagador;
-		this.beneficiarios = new ArrayList<>(beneficiarios.length + 1);
+		this.beneficiarios = new HashSet<>(beneficiarios.length + 1);
 		for (Participant beneficiario : beneficiarios)
 			this.beneficiarios.add(beneficiario);
 		this.collections = new ArrayList<>(3);
 	}
 
-	public Transaction(float importe, String concepto, Participant pagador, Participant beneficiario) {
-		this(importe, concepto, LocalDate.now(), null, pagador, beneficiario);
+	public Transaction(float importe, String concepto, Participant pagador, Participant... beneficiarios) {
+		this(importe, concepto, LocalDate.now(), null, pagador, beneficiarios);
 	}
 
 	public Transaction() {
-		this(0, null, null, null);
+		this(0, null, null, (Participant[]) null);
 	}
 
 	public int getId() {
@@ -86,7 +88,7 @@ public class Transaction implements Exportable, Serializable{
 		return pagador;
 	}
 
-	public List<Participant> getBeneficiarios() {
+	public Set<Participant> getBeneficiarios() {
 		return beneficiarios;
 	}
 
@@ -166,6 +168,11 @@ public class Transaction implements Exportable, Serializable{
 	@Override
 	public void export(ExportationVisitor exportationVisitor) {
 		exportationVisitor.visit(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "T" + this.id + "  :  $" + this.importe + "  :  " + this.concepto;
 	}
 
 }

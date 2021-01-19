@@ -2,8 +2,8 @@ package logic.transactions;
 
 import java.io.Serializable;
 
-import logic.data_exportation.Exportable;
-import logic.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.Exportable;
+import logic.data_io.data_exportation.ExportationVisitor;
 
 public class Participant implements Exportable, Serializable{
 
@@ -33,6 +33,11 @@ public class Participant implements Exportable, Serializable{
 	@Override
 	public void export(ExportationVisitor exportationVisitor) {
 		exportationVisitor.visit(this);
+	}
+	
+	@Override
+	public String toString() {
+		return "P" + this.id + " : " + this.name;
 	}
 
 }

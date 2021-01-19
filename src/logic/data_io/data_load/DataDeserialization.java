@@ -1,4 +1,4 @@
-package logic.data_load;
+package logic.data_io.data_load;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,18 +7,26 @@ import java.io.ObjectInputStream;
 
 public abstract class DataDeserialization {
 
-	public void load(String path_to_dir) {
+	protected void load(String path_to_dir, String prefix) {
 		File dir = new File(path_to_dir);
-
+		String[] files;
+		Object deserialized;
+		
 		if (dir.exists() && dir.isDirectory()) {
-
-			for (File file : dir.listFiles()) {
-				Object item = deserialize(file.getPath());
-				loadItem(item);
+			
+			files = dir.list();
+			
+			for (String filename : files) {
+				if (filename.startsWith(prefix) && filename.endsWith(".ser")) {
+					deserialized = deserialize(filename);
+					loadItem(deserialized);
+				}
 			}
-
+			
 		}
 	}
+	
+	public abstract void load(String path_to_dir);
 
 	protected abstract void loadItem(Object item);
 
