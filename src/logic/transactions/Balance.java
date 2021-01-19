@@ -8,8 +8,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import logic.data_io.data_exportation.Exportable;
-import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
 public class Balance implements TransactionModificationSensitive {

@@ -3,8 +3,6 @@ package logic.transactions;
 import java.util.LinkedList;
 import java.util.List;
 
-import logic.data_io.data_exportation.Exportable;
-import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
 public class Resumen implements TransactionModificationSensitive {

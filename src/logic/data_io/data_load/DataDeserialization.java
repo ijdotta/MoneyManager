@@ -13,21 +13,21 @@ public abstract class DataDeserialization {
 		File dir = new File(path_to_dir);
 		String[] files;
 		Object deserialized;
-		
+
 		if (dir.exists() && dir.isDirectory()) {
-			
+
 			files = dir.list();
-			
+
 			for (String filename : files) {
 				if (filename.startsWith(prefix) && filename.endsWith(".ser")) {
 					deserialized = deserialize(filename);
 					loadItem(deserialized);
 				}
 			}
-			
+
 		}
 	}
-	
+
 	public abstract void load(String path_to_dir) throws ParticipantNotFoundException;
 
 	protected abstract void loadItem(Object item) throws ParticipantNotFoundException;
@@ -35,7 +35,7 @@ public abstract class DataDeserialization {
 	public Object deserialize(String filename) {
 
 		Object item = null;
-		
+
 		try {
 			// Reading the object from a file
 			FileInputStream file = new FileInputStream(filename);
@@ -48,16 +48,30 @@ public abstract class DataDeserialization {
 			file.close();
 
 			System.out.println("Object has been deserialized ");
+
+			// Rename to .old -> permite conservar la última versión
+			File toDelete = new File(filename);
+			
+			if (toDelete.isFile()) {
+				File rename = new File(filename + ".old");
+				if (rename.exists()) {
+					rename.delete();
+					rename = new File(filename + ".old");
+				}
+				toDelete.renameTo(rename);
+				toDelete.delete();
+			}
+			
 		}
 
 		catch (IOException ex) {
-			System.out.println("IOException is caught");
+			System.err.println("IOException is caught");
 		}
 
 		catch (ClassNotFoundException ex) {
-			System.out.println("ClassNotFoundException is caught");
+			System.err.println("ClassNotFoundException is caught");
 		}
-		
+
 		return item;
 
 	}

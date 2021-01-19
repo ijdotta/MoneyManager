@@ -1,10 +1,11 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Handler;
@@ -32,15 +33,23 @@ public class TransactionsManager {
 	private static TransactionsManager instance;
 
 	protected List<Balance> balances;
-	protected HashMap<Participant, Resumen> resumenes;
-	protected List<Participant> participants;
-	protected HashSet<Transaction> transactions;
+	protected Map<Participant, Resumen> resumenes;
+	protected Map<Integer, Participant> participants;
+	protected Set<Transaction> transactions;
 
 	private TransactionsManager() {
 		setUpLogger();
 		balances = new ArrayList<>(5);
 		resumenes = new HashMap<>();
-		participants = new ArrayList<>(5);
+		/*
+		 * Alternativas: 
+		 * 		usar Map para implementar getParticipant(id) en O(1) pero getParticipants : Collection en O(n)
+		 * 		usar List para implementar getParticipants() : Collection en O(1) pero getParticipant(id) en O(n)
+		 * 
+		 * 		En principio, solo se itera sobre participants en el caso de checkParticipant, cuando se añaden nuevos participantes
+		 * 		mientras que el getParticipant(id) se utiliza cada vez que se carga una transacción (solo en etapa de carga de app, no en uso).
+		 */
+		participants = new HashMap<>(5);
 		transactions = new HashSet<>();
 	}
 
@@ -145,22 +154,22 @@ public class TransactionsManager {
 		resumenes.put(participant, resumen);
 		logger.info("Created resumen for " + participant.toString());
 
-		this.participants.add(participant);
+		this.participants.put(participant.getId(), participant);
 	}
 
 	public List<Balance> getBalances() {
 		return balances;
 	}
 
-	public HashMap<Participant, Resumen> getResumenes() {
+	public Map<Participant, Resumen> getResumenes() {
 		return resumenes;
 	}
 
-	public List<Participant> getParticipants() {
-		return participants;
+	public Collection<Participant> getParticipants() {
+		return participants.values();
 	}
 
-	public HashSet<Transaction> getTransactions() {
+	public Set<Transaction> getTransactions() {
 		return transactions;
 	}
 
@@ -171,7 +180,7 @@ public class TransactionsManager {
 		if (participant.getId() == 0) {
 			throw new InvalidParticipantException("Participat id == 0. ");
 		}
-		if (this.participants.contains(participant)) {
+		if (this.participants.containsValue(participant)) {
 			throw new InvalidParticipantException("Participant #" + participant.getId() + " already exists. ");
 		}		
 	}
@@ -193,7 +202,7 @@ public class TransactionsManager {
 		for (Transaction t : this.transactions) {
 			t.export(exportationVisitor);
 		}
-		for (Participant p : this.participants) {
+		for (Participant p : this.participants.values()) {
 			p.export(exportationVisitor);
 		}
 		
@@ -208,16 +217,14 @@ public class TransactionsManager {
 		
 		try {
 			participant_loader.load(path);
-/*		
-			// DEBUGGING
-			logger.info("RESUMENES after adding participants: ");
-			for (Entry<Participant, Resumen> e : resumenes.entrySet())
-				logger.info("P = " + e.getKey().toString() + " - " + e.getValue().toString());
-*/		
 			transaction_loader.load(path);
 		} catch (ParticipantNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public Participant getParticipant(int id) {
+		return this.participants.get(id);
 	}
 
 	/**
