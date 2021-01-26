@@ -7,9 +7,9 @@ import java.util.Scanner;
 import logic.TransactionsManager;
 import logic.data_io.data_exportation.ConsoleExportationVisitor;
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Transaction;
-import logic.transactions.exceptions.InvalidParticipantException;
+import logic.transactions.exceptions.InvalidUserException;
 import logic.transactions.exceptions.InvalidTransactionException;
 import logic.transactions.exceptions.ResumenNotFoundException;
 
@@ -94,13 +94,13 @@ public class ConsoleInterface {
 		System.out.print("Ingrese ID B: ");
 		id_B = sc.nextInt();
 		
-		Participant pA, pB;
+		User pA, pB;
 		
-		pA = manager.getParticipant(id_A);
-		pB = manager.getParticipant(id_B);
+		pA = manager.getUser(id_A);
+		pB = manager.getUser(id_B);
 		
 		for (Balance b : balances) {
-			if (b.getParticipants().contains(pA) && b.getParticipants().contains(pB)) {
+			if (b.getUsers().contains(pA) && b.getUsers().contains(pB)) {
 				current_balance = b;
 				break;
 			}
@@ -127,7 +127,7 @@ public class ConsoleInterface {
 		System.out.print("Ingrese ID pagador: ");
 		payer_id = sc.nextInt();
 		
-		t = new Transaction(amount, concepto, manager.getParticipant(payer_id));
+		t = new Transaction(amount, concepto, manager.getUser(payer_id));
 		
 		int beneficiario_id, cant = 0;
 		do {
@@ -144,7 +144,7 @@ public class ConsoleInterface {
 				}
 			}
 			else {
-				Participant p = manager.getParticipant(beneficiario_id);
+				User p = manager.getUser(beneficiario_id);
 				if (p != null)
 					t.addBeneficiarios(p);
 				else
@@ -164,7 +164,7 @@ public class ConsoleInterface {
 
 	private static void addParticipant() {
 		Scanner sc = new Scanner(System.in);
-		Participant p;
+		User p;
 		int id;
 		String name;
 		
@@ -174,11 +174,11 @@ public class ConsoleInterface {
 		System.out.print("Name: ");
 		name = sc.nextLine().trim();
 		
-		p = new Participant(id, name);
+		p = new User(id, name);
 		
 		try {
-			TransactionsManager.getInstance().addParticipant(p);
-		} catch (InvalidParticipantException e) {
+			TransactionsManager.getInstance().addUser(p);
+		} catch (InvalidUserException e) {
 			e.printStackTrace();
 			System.err.println(e.getMessage());
 		}
@@ -189,7 +189,7 @@ public class ConsoleInterface {
 	private static void listParticipants() {
 		System.out.println();
 		System.out.println(">> Participants: ");
-		for (Participant p : TransactionsManager.getInstance().getParticipants()) {
+		for (User p : TransactionsManager.getInstance().getUsers()) {
 			System.out.println(p);
 		}
 	}

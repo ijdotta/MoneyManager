@@ -14,16 +14,16 @@ import java.util.logging.Logger;
 
 import logic.data_io.data_exportation.ExportationVisitor;
 import logic.data_io.data_load.DataDeserialization;
-import logic.data_io.data_load.ParticipantDeserializationLoader;
+import logic.data_io.data_load.UserDeserializationLoader;
 import logic.data_io.data_load.TransactionDeserializationLoader;
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 import logic.transactions.TransactionModificationSensitive;
-import logic.transactions.exceptions.InvalidParticipantException;
+import logic.transactions.exceptions.InvalidUserException;
 import logic.transactions.exceptions.InvalidTransactionException;
-import logic.transactions.exceptions.ParticipantNotFoundException;
+import logic.transactions.exceptions.UserNotFoundException;
 import logic.transactions.exceptions.ResumenNotFoundException;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
@@ -33,8 +33,8 @@ public class TransactionsManager {
 	private static TransactionsManager instance;
 
 	protected List<Balance> balances;
-	protected Map<Participant, Resumen> resumenes;
-	protected Map<Integer, Participant> participants;
+	protected Map<User, Resumen> resumenes;
+	protected Map<Integer, User> users;
 	protected Set<Transaction> transactions;
 
 	private TransactionsManager() {
@@ -49,7 +49,7 @@ public class TransactionsManager {
 		 * 		En principio, solo se itera sobre participants en el caso de checkParticipant, cuando se añaden nuevos participantes
 		 * 		mientras que el getParticipant(id) se utiliza cada vez que se carga una transacción (solo en etapa de carga de app, no en uso).
 		 */
-		participants = new HashMap<>(5);
+		users = new HashMap<>(5);
 		transactions = new HashSet<>();
 	}
 
@@ -71,13 +71,13 @@ public class TransactionsManager {
 	}
 
 	private void addTransactionToResumenes(Transaction transaction) throws ResumenNotFoundException {
-		for (Participant beneficiario : transaction.getBeneficiarios()) {
+		for (User beneficiario : transaction.getBeneficiarios()) {
 			Resumen resumen = resumenes.get(beneficiario);
 			
 			logger.warning("Beneficiario hashcode " + beneficiario.hashCode());
 
 			//if resumen==null throw ParticipantNotFoundException
-			if (resumen == null) throw new ResumenNotFoundException("Resumen of participant #" + beneficiario.getId() + " not found. ");
+			if (resumen == null) throw new ResumenNotFoundException("Resumen of user #" + beneficiario.getId() + " not found. ");
 
 			resumen.add(transaction);
 			transaction.addCollections(resumen);
@@ -86,21 +86,21 @@ public class TransactionsManager {
 
 	private void addTransactionToBalances(Transaction transaction) {
 		Set<Balance> balances_to_update = new HashSet<>();
-		Participant pagador = transaction.getPagador();
+		User pagador = transaction.getPagador();
 		
-		for (Participant current_beneficiario : transaction.getBeneficiarios()) {
+		for (User current_beneficiario : transaction.getBeneficiarios()) {
 			
 			Balance target_balance = null;
 			
 			for (Balance current_balance : this.balances) {
 				
-				List<Participant> current_balance_participants = current_balance.getParticipants();
+				List<User> current_balance_users = current_balance.getUsers();
 				
 				// Uso remove pagador para evitar el caso en el que beneficiario y pagador son
 				// la misma persona.
 				// Remove no afecta a la transacción real porque es una lista externa de
 				// elementos.
-				if (current_balance_participants.remove(pagador) && current_balance_participants.contains(current_beneficiario)) {
+				if (current_balance_users.remove(pagador) && current_balance_users.contains(current_beneficiario)) {
 					target_balance = current_balance;
 				}
 				
@@ -146,42 +146,42 @@ public class TransactionsManager {
 		
 	}
 
-	public void addParticipant(Participant participant) throws InvalidParticipantException {
-		checkParticipant(participant);
+	public void addUser(User user) throws InvalidUserException {
+		checkUser(user);
 		
 		//Crear resumen
-		Resumen resumen = new Resumen(participant);
-		resumenes.put(participant, resumen);
-		logger.info("Created resumen for " + participant.toString());
+		Resumen resumen = new Resumen(user);
+		resumenes.put(user, resumen);
+		logger.info("Created resumen for " + user.toString());
 
-		this.participants.put(participant.getId(), participant);
+		this.users.put(user.getId(), user);
 	}
 
 	public List<Balance> getBalances() {
 		return balances;
 	}
 
-	public Map<Participant, Resumen> getResumenes() {
+	public Map<User, Resumen> getResumenes() {
 		return resumenes;
 	}
 
-	public Collection<Participant> getParticipants() {
-		return participants.values();
+	public Collection<User> getUsers() {
+		return users.values();
 	}
 
 	public Set<Transaction> getTransactions() {
 		return transactions;
 	}
 
-	private void checkParticipant(Participant participant) throws InvalidParticipantException {
-		if (participant == null) {
-			throw new InvalidParticipantException("Null reference");
+	private void checkUser(User user) throws InvalidUserException {
+		if (user == null) {
+			throw new InvalidUserException("Null reference");
 		}
-		if (participant.getId() == 0) {
-			throw new InvalidParticipantException("Participat id == 0. ");
+		if (user.getId() == 0) {
+			throw new InvalidUserException("Participat id == 0. ");
 		}
-		if (this.participants.containsValue(participant)) {
-			throw new InvalidParticipantException("Participant #" + participant.getId() + " already exists. ");
+		if (this.users.containsValue(user)) {
+			throw new InvalidUserException("User #" + user.getId() + " already exists. ");
 		}		
 	}
 
@@ -202,29 +202,29 @@ public class TransactionsManager {
 		for (Transaction t : this.transactions) {
 			t.export(exportationVisitor);
 		}
-		for (Participant p : this.participants.values()) {
-			p.export(exportationVisitor);
+		for (User u : this.users.values()) {
+			u.export(exportationVisitor);
 		}
 		
 	}
 	
 	public void load() {
 		String path = "./";
-		DataDeserialization participant_loader, transaction_loader;
+		DataDeserialization user_loader, transaction_loader;
 		
-		participant_loader = new ParticipantDeserializationLoader();
+		user_loader = new UserDeserializationLoader();
 		transaction_loader = new TransactionDeserializationLoader();
 		
 		try {
-			participant_loader.load(path);
+			user_loader.load(path);
 			transaction_loader.load(path);
-		} catch (ParticipantNotFoundException e) {
+		} catch (UserNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Participant getParticipant(int id) {
-		return this.participants.get(id);
+	public User getUser(int id) {
+		return this.users.get(id);
 	}
 
 	/**

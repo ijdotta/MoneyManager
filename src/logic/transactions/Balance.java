@@ -18,26 +18,26 @@ public class Balance implements TransactionModificationSensitive, Exportable {
 
 	protected float saldo;
 	protected List<Transaction> transactions;
-	protected Participant participant1, participant2;
+	protected User user1, user2;
 	
-	public Balance(Participant participant1, Participant participant2) {
+	public Balance(User user1, User user2) {
 		setUpLogger();
 		
-		this.participant1 = participant1;
-		this.participant2 = participant2;
+		this.user1 = user1;
+		this.user2 = user2;
 		transactions = new LinkedList<>();
 	}
 
 	public Debt getDebt() {
-		Participant deudor, beneficiario;
+		User deudor, beneficiario;
 		
 		if (saldo < 0) {
-			deudor = participant1;
-			beneficiario = participant2;
+			deudor = user1;
+			beneficiario = user2;
 		}
 		else {
-			deudor = participant2;
-			beneficiario = participant1;
+			deudor = user2;
+			beneficiario = user1;
 		}
 		
 		return new Debt(Math.abs(saldo) /*TODO/ 2*/, deudor, beneficiario, this);
@@ -45,12 +45,12 @@ public class Balance implements TransactionModificationSensitive, Exportable {
 
 	@Override
 	public void add(Transaction transaction) {
-		Participant pagador = transaction.getPagador();
+		User pagador = transaction.getPagador();
 		float amount = transaction.getAmount() / transaction.getBeneficiarios().size();
 		
 		transactions.add(transaction);
 		
-		if (pagador.equals(participant2)) {
+		if (pagador.equals(user2)) {
 			amount = -amount;
 		}
 		
@@ -65,10 +65,10 @@ public class Balance implements TransactionModificationSensitive, Exportable {
 			throw new TransactionNotFoundException("Transaction #" + transaction.getId() + ": " + transaction.getConcepto() + " was not found in " + this.toString() + ". ");
 		}
 		
-		Participant pagador = transaction.getPagador();
+		User pagador = transaction.getPagador();
 		float amount = transaction.getAmount();
 		
-		if (pagador.equals(participant2)) {
+		if (pagador.equals(user2)) {
 			amount = -amount;
 		}
 		
@@ -77,20 +77,20 @@ public class Balance implements TransactionModificationSensitive, Exportable {
 	}
 
 	/**
-	 * Returns a list containing the participants of the current balance.
+	 * Returns a list containing the users of the current balance.
 	 * It is safe to modify the list since it does not affect the intern state of the balance.
 	 * @return 
 	 */
-	public List<Participant> getParticipants() {
-		List<Participant> participants = new ArrayList<>(2);
-		participants.add(participant1);
-		participants.add(participant2);
-		return participants;
+	public List<User> getUsers() {
+		List<User> users = new ArrayList<>(2);
+		users.add(user1);
+		users.add(user2);
+		return users;
 	}
 	
 	@Override
 	public String toString() {
-		return "Balance: " + participant1.toString() + " - " + participant2.toString();
+		return "Balance: " + user1.toString() + " - " + user2.toString();
 	}
 	
 	/**

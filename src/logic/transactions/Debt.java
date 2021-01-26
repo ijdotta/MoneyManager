@@ -14,10 +14,10 @@ public class Debt {
 	protected static Logger logger;
 
 	protected float amount;
-	protected Participant deudor, beneficiario;
+	protected User deudor, beneficiario;
 	protected Balance balance;
 
-	public Debt(float amount, Participant deudor, Participant beneficiario, Balance balance) {
+	public Debt(float amount, User deudor, User beneficiario, Balance balance) {
 		super();
 		setUpLogger();
 		this.amount = amount;
@@ -30,7 +30,7 @@ public class Debt {
 		return amount;
 	}
 
-	public Participant getDeudor() {
+	public User getDeudor() {
 		return deudor;
 	}
 
@@ -38,7 +38,7 @@ public class Debt {
 		return balance;
 	}
 	
-	public Participant getBeneficiario() {
+	public User getBeneficiario() {
 		return beneficiario;
 	}
 

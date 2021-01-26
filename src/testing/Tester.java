@@ -8,10 +8,10 @@ import logic.data_io.data_exportation.ReadableTextFileExportationVisitor;
 import logic.data_io.data_exportation.SerializationDataExportationVisitor;
 import logic.transactions.Balance;
 import logic.transactions.Debt;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
-import logic.transactions.exceptions.InvalidParticipantException;
+import logic.transactions.exceptions.InvalidUserException;
 import logic.transactions.exceptions.InvalidTransactionException;
 import logic.transactions.exceptions.ResumenNotFoundException;
 
@@ -27,16 +27,16 @@ public class Tester {
 
 		// Definir participantes
 
-		Participant p1, p2, p3;
-		p1 = new Participant(42631354, "Ignacio");
-		p2 = new Participant(33125166, "Leandro");
-		p3 = new Participant(38252788, "Agustina");
+		User p1, p2, p3;
+		p1 = new User(42631354, "Ignacio");
+		p2 = new User(33125166, "Leandro");
+		p3 = new User(38252788, "Agustina");
 
 		try {
-			manager.addParticipant(p1);
-			manager.addParticipant(p2);
-			manager.addParticipant(p3);
-		} catch (InvalidParticipantException e) {
+			manager.addUser(p1);
+			manager.addUser(p2);
+			manager.addUser(p3);
+		} catch (InvalidUserException e) {
 			e.printStackTrace();
 		}
 
@@ -103,14 +103,14 @@ public class Tester {
 		
 	}
 
-	private static Debt debt(Participant p1, Participant p2) {
+	private static Debt debt(User p1, User p2) {
 		Balance balance = findBalance(p1, p2);
 		Debt deuda = balance.getDebt();
 		System.out.println("DEBT: " + deuda.toString());
 		return deuda;
 	}
 
-	private static void printResumen(Participant p) {
+	private static void printResumen(User p) {
 		System.out.println();
 		System.out.println("Resumen: " + p.toString());
 
@@ -123,9 +123,9 @@ public class Tester {
 
 	}
 
-	private static Balance findBalance(Participant p1, Participant p2) {
+	private static Balance findBalance(User p1, User p2) {
 		for (Balance balance : TransactionsManager.getInstance().getBalances()) {
-			Collection<Participant> participants = balance.getParticipants();
+			Collection<User> participants = balance.getUsers();
 			if (participants.contains(p1) && participants.contains(p2)) {
 				return balance;
 			}

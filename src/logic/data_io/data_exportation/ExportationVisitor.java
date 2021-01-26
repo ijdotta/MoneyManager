@@ -1,7 +1,7 @@
 package logic.data_io.data_exportation;
 
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
@@ -9,7 +9,7 @@ public interface ExportationVisitor {
 
 	public void visit(Transaction transaction);
 
-	public void visit(Participant participant);
+	public void visit(User user);
 
 	public void visit(Balance balance);
 

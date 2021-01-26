@@ -1,13 +1,13 @@
 package logic.transactions.exceptions;
 
-public class ParticipantNotFoundException extends Exception {
+public class UserNotFoundException extends Exception {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2764548598567581183L;
 
-	public ParticipantNotFoundException(String msg) {
+	public UserNotFoundException(String msg) {
 		super(msg);
 	}
 }

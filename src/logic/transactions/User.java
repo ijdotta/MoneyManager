@@ -5,14 +5,14 @@ import java.io.Serializable;
 import logic.data_io.data_exportation.Exportable;
 import logic.data_io.data_exportation.ExportationVisitor;
 
-public class Participant implements Exportable, Serializable{
+public class User implements Exportable, Serializable{
 
 	private static final long serialVersionUID = 1169051661928131692L;
 	
 	protected int id;
 	protected String name;
 
-	public Participant(int id, String name) {
+	public User(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -26,7 +26,7 @@ public class Participant implements Exportable, Serializable{
 		return name;
 	}
 	
-	public boolean equals(Participant participant) {
+	public boolean equals(User participant) {
 		return this.id == participant.getId();
 	}
 

@@ -27,8 +27,8 @@ public class Transaction implements Exportable, Serializable{
 	protected String concepto;
 	protected LocalDate fecha;
 	protected String notas;
-	protected Participant pagador;
-	protected Set<Participant> beneficiarios;
+	protected User pagador;
+	protected Set<User> beneficiarios;
 	protected transient List<TransactionModificationSensitive> collections;
 
 	/**
@@ -40,8 +40,8 @@ public class Transaction implements Exportable, Serializable{
 	 * @param pagador
 	 * @param beneficiarios
 	 */
-	public Transaction(float importe, String concepto, LocalDate fecha, String notas, Participant pagador,
-			Participant... beneficiarios) {
+	public Transaction(float importe, String concepto, LocalDate fecha, String notas, User pagador,
+			User... beneficiarios) {
 		setUpLogger();
 		
 		this.id = GLOBAL_ID++;
@@ -53,19 +53,19 @@ public class Transaction implements Exportable, Serializable{
 		this.beneficiarios = new HashSet<>(3);
 		
 		if (beneficiarios != null) {
-			for (Participant beneficiario : beneficiarios)
+			for (User beneficiario : beneficiarios)
 				this.beneficiarios.add(beneficiario);
 		}
 		
 		this.collections = new ArrayList<>(3);
 	}
 
-	public Transaction(float importe, String concepto, Participant pagador, Participant... beneficiarios) {
+	public Transaction(float importe, String concepto, User pagador, User... beneficiarios) {
 		this(importe, concepto, LocalDate.now(), null, pagador, beneficiarios);
 	}
 
 	public Transaction() {
-		this(0, null, null, (Participant[]) null);
+		this(0, null, null, (User[]) null);
 	}
 
 	public int getId() {
@@ -88,11 +88,11 @@ public class Transaction implements Exportable, Serializable{
 		return notas;
 	}
 
-	public Participant getPagador() {
+	public User getPagador() {
 		return pagador;
 	}
 
-	public Set<Participant> getBeneficiarios() {
+	public Set<User> getBeneficiarios() {
 		return beneficiarios;
 	}
 
@@ -116,12 +116,12 @@ public class Transaction implements Exportable, Serializable{
 		this.notas = notas;
 	}
 
-	public void setPagador(Participant pagador) {
+	public void setPagador(User pagador) {
 		this.pagador = pagador;
 	}
 
-	public void addBeneficiarios(Participant... beneficiarios) {
-		for (Participant beneficiario : beneficiarios) {
+	public void addBeneficiarios(User... beneficiarios) {
+		for (User beneficiario : beneficiarios) {
 			this.beneficiarios.add(beneficiario);
 		}
 	}
@@ -187,7 +187,7 @@ public class Transaction implements Exportable, Serializable{
 		snap.setFecha(fecha);
 		snap.setNotas(notas);
 		snap.setPagador_id(pagador.getId());
-		for (Participant beneficiario : beneficiarios) {
+		for (User beneficiario : beneficiarios) {
 			snap.addBeneficiarioId(beneficiario.getId());
 		}
 		return snap;

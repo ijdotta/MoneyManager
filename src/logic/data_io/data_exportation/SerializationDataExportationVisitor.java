@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
@@ -18,8 +18,8 @@ public class SerializationDataExportationVisitor implements ExportationVisitor {
 	}
 
 	@Override
-	public void visit(Participant participant) {
-		String filename = "p" + participant.getId() + ".ser";
+	public void visit(User participant) {
+		String filename = "u" + participant.getId() + ".ser";
 		serialize(participant, filename);
 	}
 	

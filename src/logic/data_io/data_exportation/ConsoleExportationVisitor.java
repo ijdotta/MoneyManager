@@ -1,7 +1,7 @@
 package logic.data_io.data_exportation;
 
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
@@ -13,8 +13,8 @@ public class ConsoleExportationVisitor implements ExportationVisitor {
 	}
 
 	@Override
-	public void visit(Participant participant) {
-		System.out.println(participant.toString());
+	public void visit(User user) {
+		System.out.println(user.toString());
 	}
 
 	@Override

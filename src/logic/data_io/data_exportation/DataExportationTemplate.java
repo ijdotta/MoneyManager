@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import logic.transactions.Balance;
 import logic.transactions.Debt;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
@@ -28,11 +28,11 @@ public abstract class DataExportationTemplate {
 		return fields;
 	}
 	
-	protected String[] getFields(Participant p) {
+	protected String[] getFields(User u) {
 		String[] fields = new String[2];
 		
-		fields[0] = String.format("#%06d", p.getId());
-		fields[1] = String.format("%30s", p.getName());
+		fields[0] = String.format("#%06d", u.getId());
+		fields[1] = String.format("%30s", u.getName());
 		
 		return fields;
 	}

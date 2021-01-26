@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import logic.transactions.Balance;
-import logic.transactions.Participant;
+import logic.transactions.User;
 import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
@@ -30,7 +30,7 @@ public class ReadableTextFileExportationVisitor extends DataExportationTemplate 
 	}
 
 	@Override
-	public void visit(Participant participant) {
+	public void visit(User user) {
 		// TODO Auto-generated method stub
 
 	}

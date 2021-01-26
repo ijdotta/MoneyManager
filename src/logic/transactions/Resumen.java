@@ -11,9 +11,9 @@ public class Resumen implements TransactionModificationSensitive, Exportable {
 
 	protected float amount;
 	protected List<Transaction> transactions;
-	protected Participant actor;
+	protected User actor;
 
-	public Resumen(Participant actor) {
+	public Resumen(User actor) {
 		super();
 		this.actor = actor;
 		this.transactions = new LinkedList<Transaction>();
@@ -39,7 +39,7 @@ public class Resumen implements TransactionModificationSensitive, Exportable {
 		return amount;
 	}
 	
-	public Participant getActor() {
+	public User getActor() {
 		return actor;
 	}
 
