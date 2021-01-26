@@ -37,6 +37,10 @@ public class Debt {
 	public Balance getBalance() {
 		return balance;
 	}
+	
+	public Participant getBeneficiario() {
+		return beneficiario;
+	}
 
 	public void pay(float amount) {
 		TransactionsManager manager = TransactionsManager.getInstance();

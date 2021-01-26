@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import logic.transactions.Balance;
 import logic.transactions.Participant;
+import logic.transactions.Resumen;
 import logic.transactions.Transaction;
 
 public class SerializationDataExportationVisitor implements ExportationVisitor {
@@ -43,6 +45,16 @@ public class SerializationDataExportationVisitor implements ExportationVisitor {
         	ex.printStackTrace();
             System.out.println("IOException is caught " + o.toString()); 
         } 
+	}
+
+	@Override
+	public void visit(Balance balance) {
+		//Does nothing
+	}
+
+	@Override
+	public void visit(Resumen resumen) {
+		//Does nothing
 	}
 	
 }

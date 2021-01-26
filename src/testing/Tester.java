@@ -4,6 +4,7 @@ import java.util.Collection;
 import logic.TransactionsManager;
 import logic.data_io.data_exportation.ConsoleExportationVisitor;
 import logic.data_io.data_exportation.ExportationVisitor;
+import logic.data_io.data_exportation.ReadableTextFileExportationVisitor;
 import logic.data_io.data_exportation.SerializationDataExportationVisitor;
 import logic.transactions.Balance;
 import logic.transactions.Debt;
@@ -98,6 +99,7 @@ public class Tester {
 		
 		// Serialize
 		manager.export(serialExport);
+		manager.export(new ReadableTextFileExportationVisitor());
 		
 	}
 

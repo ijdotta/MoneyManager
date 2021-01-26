@@ -3,9 +3,11 @@ package logic.transactions;
 import java.util.LinkedList;
 import java.util.List;
 
+import logic.data_io.data_exportation.Exportable;
+import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
-public class Resumen implements TransactionModificationSensitive {
+public class Resumen implements TransactionModificationSensitive, Exportable {
 
 	protected float amount;
 	protected List<Transaction> transactions;
@@ -36,6 +38,10 @@ public class Resumen implements TransactionModificationSensitive {
 	public float getImporte() {
 		return amount;
 	}
+	
+	public Participant getActor() {
+		return actor;
+	}
 
 	public List<Transaction> getTransactions() {
 		return transactions;
@@ -49,6 +55,11 @@ public class Resumen implements TransactionModificationSensitive {
 	@Override
 	public String toString() {
 		return "Resumen: " + this.actor.toString();
+	}
+
+	@Override
+	public void export(ExportationVisitor exportationVisitor) {
+		exportationVisitor.visit(this);		
 	}
 
 }

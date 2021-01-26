@@ -8,9 +8,11 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import logic.data_io.data_exportation.Exportable;
+import logic.data_io.data_exportation.ExportationVisitor;
 import logic.transactions.exceptions.TransactionNotFoundException;
 
-public class Balance implements TransactionModificationSensitive {
+public class Balance implements TransactionModificationSensitive, Exportable {
 	
 	protected static Logger logger;
 
@@ -74,6 +76,11 @@ public class Balance implements TransactionModificationSensitive {
 
 	}
 
+	/**
+	 * Returns a list containing the participants of the current balance.
+	 * It is safe to modify the list since it does not affect the intern state of the balance.
+	 * @return 
+	 */
 	public List<Participant> getParticipants() {
 		List<Participant> participants = new ArrayList<>(2);
 		participants.add(participant1);
@@ -104,6 +111,11 @@ public class Balance implements TransactionModificationSensitive {
 			for (Handler h : rootLoger.getHandlers())
 				h.setLevel(Level.OFF);
 		}
+	}
+
+	@Override
+	public void export(ExportationVisitor exportationVisitor) {
+		exportationVisitor.visit(this);
 	}
 
 }
