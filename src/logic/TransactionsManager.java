@@ -180,7 +180,7 @@ public class TransactionsManager {
 		if (user.getId() == 0) {
 			throw new InvalidUserException("Participat id == 0. ");
 		}
-		if (this.users.containsValue(user)) {
+		if (this.users.containsKey(user.getId())) {
 			throw new InvalidUserException("User #" + user.getId() + " already exists. ");
 		}		
 	}
