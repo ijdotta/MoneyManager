@@ -4,25 +4,25 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDate;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import com.github.lgooddatepicker.components.CalendarPanel;
-import com.github.lgooddatepicker.components.DatePicker;
-
 import gui.commands.AddUserCommand;
 import gui.commands.Command;
 import gui.commands.components.CommandButton;
-import gui.forms.UserInputForm;
+import gui.forms.TransactionInputForm;
 
 public class GUI_Main extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3739307868059471262L;
+	
 	private JPanel contentPane;
 	
 	/**
@@ -66,6 +66,17 @@ public class GUI_Main extends JFrame {
 
 		});
 		contentPane.add(btnClickMe);
+		
+		CommandButton btnAddTransaction = new CommandButton("Add transaction");
+		btnAddTransaction.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showConfirmDialog(null, new TransactionInputForm(), "Test", JOptionPane.OK_CANCEL_OPTION,
+						JOptionPane.PLAIN_MESSAGE);
+			}
+		});
+		contentPane.add(btnAddTransaction);
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
